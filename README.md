@@ -3,3 +3,19 @@
 ***macOS***
 
 `brew install eigen`
+
+neovim lsp clangd config
+
+```lua
+local servers = {
+  clangd = {
+    cmd = {
+      "clangd",
+      "--function-arg-placeholders=0",
+      "--enable-config",
+      "--offset-encoding=utf-16",
+      "--compile-commands-dir=build",
+    },
+  },
+}
+```

@@ -5,7 +5,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 find_package(Eigen3 REQUIRED)
 
-add_executable (Transformation main.cpp)
+add_executable (${PROJECT_NAME} main.cpp)
 
-target_link_libraries(Transformation Eigen3::Eigen)
-message(STATUS "Eigen3 include dir: ${EIGEN3_INCLUDE_DIR}")
+target_link_libraries(${PROJECT_NAME} Eigen3::Eigen)
