@@ -2,7 +2,8 @@
 
 ***macOS***
 
-`brew install eigen`
+`brew install eigen`  
+`brew install opencv`
 
 neovim lsp clangd config
 
