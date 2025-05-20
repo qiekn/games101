@@ -1,6 +1,7 @@
 #include "rasterizer.hpp"
-#include "triangle.hpp"
 #include <Eigen/Eigen>
+#include <cmath>
+#include <cstdlib>
 #include <iostream>
 #include <opencv2/opencv.hpp>
 
@@ -21,23 +22,52 @@ Eigen::Matrix4f get_view_matrix(Eigen::Vector3f eye_pos) {
 Eigen::Matrix4f get_model_matrix(float rotation_angle) {
   Eigen::Matrix4f model = Eigen::Matrix4f::Identity();
 
-  // TODO: Implement this function
   // Create the model matrix for rotating the triangle around the Z axis.
   // Then return it.
+  float theta = rotation_angle / 180.0 * MY_PI;
+  // clang-format off
+  model <<
+    cos(theta), -sin(theta), 0, 0,
+    sin(theta), cos(theta), 0, 0,
+    0, 0, 1, 0,
+    0, 0, 0, 1;
+  // clang-format on
 
   return model;
 }
 
 Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio,
                                       float zNear, float zFar) {
-  // Students will implement this function
-
   Eigen::Matrix4f projection = Eigen::Matrix4f::Identity();
+  Eigen::Matrix4f persp2ortho;
+  Eigen::Matrix4f ortho_trans;
+  Eigen::Matrix4f ortho_scale;
 
-  // TODO: Implement this function
+  float n = -zNear;
+  float f = -zFar;
+
+  float t = tan(eye_fov / 2.0 / 180.0 * MY_PI) * abs(zNear);
+  float b = -t;
+  float r = t * aspect_ratio;
+  float l = -r;
+
   // Create the projection matrix for the given parameters.
-  // Then return it.
+  // clang-format off
+  persp2ortho << n, 0, 0, 0,
+                 0, n, 0, 0,
+                 0, 0, n + f, -n * f,
+                 0, 0, 1, 0;
+  ortho_trans << 1, 0, 0, -(r + l) / 2,
+                 0, 1, 0, -(t + b) / 2,
+                 0, 0, 1, -(n + f) / 2,
+                 0, 0, 0, 1;
+  ortho_scale << 2 / (r - l), 0, 0, 0,
+                 0, 2 / (t - b), 0, 0,
+                 0, 0, 2 / (n - f), 0,
+                 0, 0, 0, 1;
+  // clang-format on
 
+  projection = ortho_scale * ortho_trans * persp2ortho;
   return projection;
 }
 
