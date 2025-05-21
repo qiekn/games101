@@ -76,28 +76,28 @@ int main(int argc, const char **argv) {
   Eigen::Vector3f eye_pos = {0, 0, 5};
 
   // clang-format off
-    std::vector<Eigen::Vector3f> pos {
-                    {2, 0, -2},
-                    {0, 2, -2},
-                    {-2, 0, -2},
-                    {3.5, -1, -5},
-                    {2.5, 1.5, -5},
-                    {-1, 0.5, -5}
-    };
+  std::vector<Eigen::Vector3f> pos {
+                  {2, 0, -2},
+                  {0, 2, -2},
+                  {-2, 0, -2},
+                  {3.5, -1, -5},
+                  {2.5, 1.5, -5},
+                  {-1, 0.5, -5}
+  };
 
-    std::vector<Eigen::Vector3i> ind {
-                    {0, 1, 2},
-                    {3, 4, 5}
-    };
+  std::vector<Eigen::Vector3i> ind {
+                  {0, 1, 2},
+                  {3, 4, 5}
+  };
 
-    std::vector<Eigen::Vector3f> cols {
-                    {217.0, 238.0, 185.0},
-                    {217.0, 238.0, 185.0},
-                    {217.0, 238.0, 185.0},
-                    {185.0, 217.0, 238.0},
-                    {185.0, 217.0, 238.0},
-                    {185.0, 217.0, 238.0}
-    };
+  std::vector<Eigen::Vector3f> cols {
+                  {217.0, 238.0, 185.0},
+                  {217.0, 238.0, 185.0},
+                  {217.0, 238.0, 185.0},
+                  {185.0, 217.0, 238.0},
+                  {185.0, 217.0, 238.0},
+                  {185.0, 217.0, 238.0}
+  };
   // clang-format on
 
   auto pos_id = r.load_positions(pos);
