@@ -34,8 +34,8 @@ Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio,
   Eigen::Matrix4f ortho_trans;
   Eigen::Matrix4f ortho_scale;
 
-  float n = -zNear;
-  float f = -zFar;
+  float n = -abs(zNear);
+  float f = -abs(zFar);
 
   float t = tan(eye_fov / 2.0 / 180.0 * MY_PI) * abs(zNear);
   float b = -t;
@@ -53,7 +53,7 @@ Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio,
                  0, 0, 0, 1;
   ortho_scale << 2 / (r - l), 0, 0, 0,
                  0, 2 / (t - b), 0, 0,
-                 0, 0, 2 / (n - f), 0,
+                 0, 0, -2 / (n - f), 0,
                  0, 0, 0, 1;
   // clang-format on
 
