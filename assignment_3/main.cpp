@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <iostream>
 #include <opencv2/opencv.hpp>
 #include "global.hpp"
@@ -141,10 +142,20 @@ Eigen::Vector3f phong_fragment_shader(const fragment_shader_payload &payload) {
   Eigen::Vector3f normal = payload.normal;
 
   Eigen::Vector3f result_color = {0, 0, 0};
+
+  Eigen::Vector3f v = (eye_pos - point).normalized();
+
   for (auto &light : lights) {
-    // TODO: For each light source in the code, calculate what the *ambient*,
-    // *diffuse*, and *specular* components are. Then, accumulate that result on
-    // the *result_color* object.
+    Eigen::Vector3f l = (light.position - point).normalized();
+    Eigen::Vector3f h = (l + v).normalized();
+    // For each light source in the code, calculate what the *ambient*, *diffuse*, and *specular*
+    // components are. Then, accumulate that result on the *result_color* object.
+    for (int i = 0; i < 3; ++i) {
+      float intense = light.intensity[i] / (light.position - point).squaredNorm();
+      result_color[i] += kd[i] * intense * std::max(0.0f, normal.dot(l));               // diffuse
+      result_color[i] += ks[i] * intense * std::pow(std::max(0.0f, normal.dot(h)), p);  // specular
+      result_color[i] += ka[i] * amb_light_intensity[i];                                // ambient
+    }
   }
 
   return result_color * 255.f;
