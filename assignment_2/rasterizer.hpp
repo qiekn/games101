@@ -4,22 +4,18 @@
 
 #pragma once
 
+#include <algorithm>
+#include <Eigen/Eigen>
 #include "global.hpp"
 #include "triangle.hpp"
-#include <Eigen/Eigen>
-#include <algorithm>
 using namespace Eigen;
 
 namespace rst {
 enum class Buffers { Color = 1, Depth = 2 };
 
-inline Buffers operator|(Buffers a, Buffers b) {
-  return Buffers((int)a | (int)b);
-}
+inline Buffers operator|(Buffers a, Buffers b) { return Buffers((int)a | (int)b); }
 
-inline Buffers operator&(Buffers a, Buffers b) {
-  return Buffers((int)a & (int)b);
-}
+inline Buffers operator&(Buffers a, Buffers b) { return Buffers((int)a & (int)b); }
 
 enum class Primitive { Line, Triangle };
 
@@ -55,8 +51,7 @@ public:
 
   void clear(Buffers buff);
 
-  void draw(pos_buf_id pos_buffer, ind_buf_id ind_buffer, col_buf_id col_buffer,
-            Primitive type);
+  void draw(pos_buf_id pos_buffer, ind_buf_id ind_buffer, col_buf_id col_buffer, Primitive type);
 
   std::vector<Eigen::Vector3f> &frame_buffer() { return frame_buf; }
 
@@ -87,4 +82,4 @@ private:
   int next_id = 0;
   int get_next_id() { return next_id++; }
 };
-} // namespace rst
+}  // namespace rst

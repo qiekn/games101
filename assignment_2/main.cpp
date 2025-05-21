@@ -1,8 +1,8 @@
+#include <iostream>
+#include <opencv2/opencv.hpp>
 #include "global.hpp"
 #include "rasterizer.hpp"
 #include "triangle.hpp"
-#include <iostream>
-#include <opencv2/opencv.hpp>
 
 constexpr double MY_PI = 3.1415926;
 
@@ -27,8 +27,7 @@ Eigen::Matrix4f get_model_matrix(float rotation_angle) {
   return model;
 }
 
-Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio,
-                                      float zNear, float zFar) {
+Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio, float zNear, float zFar) {
   Eigen::Matrix4f projection = Eigen::Matrix4f::Identity();
   Eigen::Matrix4f persp2ortho;
   Eigen::Matrix4f ortho_trans;

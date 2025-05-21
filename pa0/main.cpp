@@ -1,6 +1,6 @@
+#include <cmath>
 #include <Eigen/Core>
 #include <Eigen/Dense>
-#include <cmath>
 #include <iostream>
 
 int main() {

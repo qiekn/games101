@@ -4,25 +4,21 @@
 
 #pragma once
 
+#include <algorithm>
+#include <Eigen/Eigen>
+#include <optional>
 #include "global.hpp"
 #include "shader.hpp"
 #include "triangle.hpp"
-#include <Eigen/Eigen>
-#include <algorithm>
-#include <optional>
 
 using namespace Eigen;
 
 namespace rst {
 enum class Buffers { Color = 1, Depth = 2 };
 
-inline Buffers operator|(Buffers a, Buffers b) {
-  return Buffers((int)a | (int)b);
-}
+inline Buffers operator|(Buffers a, Buffers b) { return Buffers((int)a | (int)b); }
 
-inline Buffers operator&(Buffers a, Buffers b) {
-  return Buffers((int)a & (int)b);
-}
+inline Buffers operator&(Buffers a, Buffers b) { return Buffers((int)a & (int)b); }
 
 enum class Primitive { Line, Triangle };
 
@@ -57,17 +53,14 @@ public:
 
   void set_texture(Texture tex) { texture = tex; }
 
-  void set_vertex_shader(
-      std::function<Eigen::Vector3f(vertex_shader_payload)> vert_shader);
-  void set_fragment_shader(
-      std::function<Eigen::Vector3f(fragment_shader_payload)> frag_shader);
+  void set_vertex_shader(std::function<Eigen::Vector3f(vertex_shader_payload)> vert_shader);
+  void set_fragment_shader(std::function<Eigen::Vector3f(fragment_shader_payload)> frag_shader);
 
   void set_pixel(const Vector2i &point, const Eigen::Vector3f &color);
 
   void clear(Buffers buff);
 
-  void draw(pos_buf_id pos_buffer, ind_buf_id ind_buffer, col_buf_id col_buffer,
-            Primitive type);
+  void draw(pos_buf_id pos_buffer, ind_buf_id ind_buffer, col_buf_id col_buffer, Primitive type);
   void draw(std::vector<Triangle *> &TriangleList);
 
   std::vector<Eigen::Vector3f> &frame_buffer() { return frame_buf; }
@@ -75,8 +68,7 @@ public:
 private:
   void draw_line(Eigen::Vector3f begin, Eigen::Vector3f end);
 
-  void rasterize_triangle(const Triangle &t,
-                          const std::array<Eigen::Vector3f, 3> &world_pos);
+  void rasterize_triangle(const Triangle &t, const std::array<Eigen::Vector3f, 3> &world_pos);
 
   // VERTEX SHADER -> MVP -> Clipping -> /.W -> VIEWPORT -> DRAWLINE/DRAWTRI ->
   // FRAGSHADER
@@ -107,4 +99,4 @@ private:
   int next_id = 0;
   int get_next_id() { return next_id++; }
 };
-} // namespace rst
+}  // namespace rst

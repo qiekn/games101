@@ -4,9 +4,9 @@
 
 #ifndef RASTERIZER_TEXTURE_H
 #define RASTERIZER_TEXTURE_H
-#include "global.hpp"
 #include <Eigen/Eigen>
 #include <opencv2/opencv.hpp>
+#include "global.hpp"
 class Texture {
 private:
   cv::Mat image_data;
@@ -28,4 +28,4 @@ public:
     return Eigen::Vector3f(color[0], color[1], color[2]);
   }
 };
-#endif // RASTERIZER_TEXTURE_H
+#endif  // RASTERIZER_TEXTURE_H

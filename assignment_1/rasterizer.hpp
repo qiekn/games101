@@ -4,20 +4,16 @@
 
 #pragma once
 
-#include "triangle.hpp"
 #include <Eigen/Eigen>
+#include "triangle.hpp"
 using namespace Eigen;
 
 namespace rst {
 enum class Buffers { Color = 1, Depth = 2 };
 
-inline Buffers operator|(Buffers a, Buffers b) {
-  return Buffers((int)a | (int)b);
-}
+inline Buffers operator|(Buffers a, Buffers b) { return Buffers((int)a | (int)b); }
 
-inline Buffers operator&(Buffers a, Buffers b) {
-  return Buffers((int)a & (int)b);
-}
+inline Buffers operator&(Buffers a, Buffers b) { return Buffers((int)a & (int)b); }
 
 enum class Primitive { Line, Triangle };
 
@@ -73,4 +69,4 @@ private:
   int next_id = 0;
   int get_next_id() { return next_id++; }
 };
-} // namespace rst
+}  // namespace rst
