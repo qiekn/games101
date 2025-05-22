@@ -188,7 +188,7 @@ Eigen::Vector3f displacement_fragment_shader(const fragment_shader_payload &payl
 
   float kh = 0.2, kn = 0.1;
 
-  // TODO: Implement displacement mapping here
+  // INFO: Implement displacement mapping here
   // Let n = normal = (x, y, z)
   // Vector t = (x*y/sqrt(x*x+z*z),sqrt(x*x+z*z),z*y/sqrt(x*x+z*z))
   // Vector b = n cross product t
@@ -199,12 +199,41 @@ Eigen::Vector3f displacement_fragment_shader(const fragment_shader_payload &payl
   // Position p = p + kn * n * h(u,v)
   // Normal n = normalize(TBN * ln)
 
+  float x = normal.x();
+  float y = normal.y();
+  float z = normal.z();
+  Vector3f t(x * y / sqrt(x * x + z * z), sqrt(x * x + z * z), z * y / sqrt(x * x + z * z));
+  Vector3f b = normal.cross(t);
+
+  Matrix3f TBN;
+  TBN << t, b, normal;
+
+  int w = payload.texture->width;
+  int h = payload.texture->height;
+  float u = payload.tex_coords.x();
+  float v = payload.tex_coords.y();
+
+  auto height = [&](float x, float y) { return payload.texture->getColor(x, y).norm(); };
+
+  float dU = kh * kn * (height(u + 1.0f / w, v) - height(u, v));
+  float dV = kh * kn * (height(u, (v + 1) / h) - height(u, v));
+
+  Vector3f ln(-dU, -dV, 1);
+  point += kn * normal * height(u, v);
+  normal = (TBN * ln).normalized();
+
   Eigen::Vector3f result_color = {0, 0, 0};
 
+  Eigen::Vector3f view_dir = (eye_pos - point).normalized();
   for (auto &light : lights) {
-    // TODO: For each light source in the code, calculate what the *ambient*,
-    // *diffuse*, and *specular* components are. Then, accumulate that result on
-    // the *result_color* object.
+    Eigen::Vector3f light_dir = (light.position - point).normalized();
+    Eigen::Vector3f h = (light_dir + view_dir).normalized();  // bisector
+    for (int i = 0; i < 3; ++i) {
+      float intense = light.intensity[i] / (light.position - point).squaredNorm();
+      result_color[i] += kd[i] * intense * std::max(0.0f, normal.dot(light_dir));       // diffuse
+      result_color[i] += ks[i] * intense * std::pow(std::max(0.0f, normal.dot(h)), p);  // specular
+      result_color[i] += ka[i] * amb_light_intensity[i];                                // ambient
+    }
   }
 
   return result_color * 255.f;
