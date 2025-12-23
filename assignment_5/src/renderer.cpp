@@ -1,13 +1,12 @@
 #include "renderer.h"
-#include <fstream>
 #include <optional>
 #include "scene.h"
 #include "vector.h"
 
-inline float deg2rad(const float &deg) { return deg * M_PI / 180.0; }
+inline float deg2rad(const float& deg) { return deg * M_PI / 180.0; }
 
 // Compute reflection direction
-Vector3f reflect(const Vector3f &I, const Vector3f &N) { return I - 2 * dotProduct(I, N) * N; }
+Vector3f reflect(const Vector3f& I, const Vector3f& N) { return I - 2 * dotProduct(I, N) * N; }
 
 // [comment]
 // Compute refraction direction using Snell's law
@@ -22,7 +21,7 @@ Vector3f reflect(const Vector3f &I, const Vector3f &N) { return I - 2 * dotProdu
 //
 // If the ray is inside, you need to invert the refractive indices and negate the normal N
 // [/comment]
-Vector3f refract(const Vector3f &I, const Vector3f &N, const float &ior) {
+Vector3f refract(const Vector3f& I, const Vector3f& N, const float& ior) {
   float cosi = clamp(-1, 1, dotProduct(I, N));
   float etai = 1, etat = ior;
   Vector3f n = N;
@@ -46,7 +45,7 @@ Vector3f refract(const Vector3f &I, const Vector3f &N, const float &ior) {
 //
 // \param ior is the material refractive index
 // [/comment]
-float fresnel(const Vector3f &I, const Vector3f &N, const float &ior) {
+float fresnel(const Vector3f& I, const Vector3f& N, const float& ior) {
   float cosi = clamp(-1, 1, dotProduct(I, N));
   float etai = 1, etat = ior;
   if (cosi > 0) {
@@ -83,18 +82,18 @@ float fresnel(const Vector3f &I, const Vector3f &N, const float &ior) {
 // \param isShadowRay is it a shadow ray. We can return from the function sooner as soon as we have
 // found a hit.
 // [/comment]
-std::optional<hit_payload> trace(const Vector3f &orig, const Vector3f &dir,
-                                 const std::vector<std::unique_ptr<Object> > &objects) {
+std::optional<HitPayload> trace(const Vector3f& orig, const Vector3f& dir,
+                                const std::vector<std::unique_ptr<Object> >& objects) {
   float tNear = kInfinity;
-  std::optional<hit_payload> payload;
-  for (const auto &object : objects) {
+  std::optional<HitPayload> payload;
+  for (const auto& object : objects) {
     float tNearK = kInfinity;
     uint32_t indexK;
     Vector2f uvK;
-    if (object->intersect(orig, dir, tNearK, indexK, uvK) && tNearK < tNear) {
+    if (object->Intersect(orig, dir, tNearK, indexK, uvK) && tNearK < tNear) {
       payload.emplace();
       payload->hit_obj = object.get();
-      payload->tNear = tNearK;
+      payload->t_near = tNearK;
       payload->index = indexK;
       payload->uv = uvK;
       tNear = tNearK;
@@ -121,19 +120,19 @@ std::optional<hit_payload> trace(const Vector3f &orig, const Vector3f &dir,
 // If the surface is diffuse/glossy we use the Phong illumation model to compute the color
 // at the intersection point.
 // [/comment]
-Vector3f castRay(const Vector3f &orig, const Vector3f &dir, const Scene &scene, int depth) {
-  if (depth > scene.maxDepth) {
+Vector3f castRay(const Vector3f& orig, const Vector3f& dir, const Scene& scene, int depth) {
+  if (depth > scene.max_depth) {
     return Vector3f(0.0, 0.0, 0.0);
   }
 
-  Vector3f hitColor = scene.backgroundColor;
-  if (auto payload = trace(orig, dir, scene.get_objects()); payload) {
-    Vector3f hitPoint = orig + dir * payload->tNear;
+  Vector3f hitColor = scene.background_color;
+  if (auto payload = trace(orig, dir, scene.GetObjects()); payload) {
+    Vector3f hitPoint = orig + dir * payload->t_near;
     Vector3f N;   // normal
     Vector2f st;  // st coordinates
-    payload->hit_obj->getSurfaceProperties(hitPoint, dir, payload->index, payload->uv, N, st);
-    switch (payload->hit_obj->materialType) {
-      case REFLECTION_AND_REFRACTION: {
+    payload->hit_obj->GetSurfaceProperties(hitPoint, dir, payload->index, payload->uv, N, st);
+    switch (payload->hit_obj->material_type) {
+      case kREFLECTION_AND_REFRACTION: {
         Vector3f reflectionDirection = normalize(reflect(dir, N));
         Vector3f refractionDirection = normalize(refract(dir, N, payload->hit_obj->ior));
         Vector3f reflectionRayOrig = (dotProduct(reflectionDirection, N) < 0)
@@ -150,7 +149,7 @@ Vector3f castRay(const Vector3f &orig, const Vector3f &dir, const Scene &scene, 
         hitColor = reflectionColor * kr + refractionColor * (1 - kr);
         break;
       }
-      case REFLECTION: {
+      case kREFLECTION: {
         float kr = fresnel(dir, N, payload->hit_obj->ior);
         Vector3f reflectionDirection = reflect(dir, N);
         Vector3f reflectionRayOrig = (dotProduct(reflectionDirection, N) < 0)
@@ -171,7 +170,7 @@ Vector3f castRay(const Vector3f &orig, const Vector3f &dir, const Scene &scene, 
         // Loop over all lights in the scene and sum their contribution up
         // We also apply the lambert cosine law
         // [/comment]
-        for (auto &light : scene.get_lights()) {
+        for (auto& light : scene.GetLights()) {
           Vector3f lightDir = light->position - hitPoint;
           // square of the distance between hitPoint and the light
           float lightDistance2 = dotProduct(lightDir, lightDir);
@@ -179,18 +178,18 @@ Vector3f castRay(const Vector3f &orig, const Vector3f &dir, const Scene &scene, 
           float LdotN = std::max(0.f, dotProduct(lightDir, N));
           // is the point in shadow, and is the nearest occluding object closer to the object than
           // the light itself?
-          auto shadow_res = trace(shadowPointOrig, lightDir, scene.get_objects());
-          bool inShadow = shadow_res && (shadow_res->tNear * shadow_res->tNear < lightDistance2);
+          auto shadow_res = trace(shadowPointOrig, lightDir, scene.GetObjects());
+          bool inShadow = shadow_res && (shadow_res->t_near * shadow_res->t_near < lightDistance2);
 
           lightAmt += inShadow ? 0 : light->intensity * LdotN;
           Vector3f reflectionDirection = reflect(-lightDir, N);
 
           specularColor += powf(std::max(0.f, -dotProduct(reflectionDirection, dir)),
-                                payload->hit_obj->specularExponent) *
+                                payload->hit_obj->specular_exponent) *
                            light->intensity;
         }
 
-        hitColor = lightAmt * payload->hit_obj->evalDiffuseColor(st) * payload->hit_obj->Kd +
+        hitColor = lightAmt * payload->hit_obj->EvalDiffuseColor(st) * payload->hit_obj->Kd +
                    specularColor * payload->hit_obj->Ks;
         break;
       }
@@ -205,7 +204,7 @@ Vector3f castRay(const Vector3f &orig, const Vector3f &dir, const Scene &scene, 
 // primary rays and cast these rays into the scene. The content of the framebuffer is
 // saved to a file.
 // [/comment]
-void Renderer::Render(const Scene &scene) {
+void Renderer::Render(const Scene& scene) {
   std::vector<Vector3f> framebuffer(scene.width * scene.height);
 
   float scale = std::tan(deg2rad(scene.fov * 0.5f));
@@ -231,7 +230,7 @@ void Renderer::Render(const Scene &scene) {
   }
 
   // save framebuffer to file
-  FILE *fp = fopen("binary.ppm", "wb");
+  FILE* fp = fopen("binary.ppm", "wb");
   (void)fprintf(fp, "P6\n%d %d\n255\n", scene.width, scene.height);
   for (auto i = 0; i < scene.height * scene.width; ++i) {
     static unsigned char color[3];

@@ -1,8 +1,8 @@
 #pragma once
 #include "scene.h"
 
-struct hit_payload {
-  float tNear;
+struct HitPayload {
+  float t_near;
   uint32_t index;
   Vector2f uv;
   Object* hit_obj;

@@ -6,26 +6,26 @@
 class Object {
 public:
   Object()
-      : materialType(DIFFUSE_AND_GLOSSY),
+      : material_type(kDIFFUSE_AND_GLOSSY),
         ior(1.3),
         Kd(0.8),
         Ks(0.2),
-        diffuseColor(0.2),
-        specularExponent(25) {}
+        diffuse_color(0.2),
+        specular_exponent(25) {}
 
   virtual ~Object() = default;
 
-  virtual bool intersect(const Vector3f&, const Vector3f&, float&, uint32_t&, Vector2f&) const = 0;
+  virtual bool Intersect(const Vector3f&, const Vector3f&, float&, uint32_t&, Vector2f&) const = 0;
 
-  virtual void getSurfaceProperties(const Vector3f&, const Vector3f&, const uint32_t&,
+  virtual void GetSurfaceProperties(const Vector3f&, const Vector3f&, const uint32_t&,
                                     const Vector2f&, Vector3f&, Vector2f&) const = 0;
 
-  virtual Vector3f evalDiffuseColor(const Vector2f&) const { return diffuseColor; }
+  virtual Vector3f EvalDiffuseColor(const Vector2f&) const { return diffuse_color; }
 
   // material properties
-  MaterialType materialType;
+  MaterialType material_type;
   float ior;
   float Kd, Ks;
-  Vector3f diffuseColor;
-  float specularExponent;
+  Vector3f diffuse_color;
+  float specular_exponent;
 };

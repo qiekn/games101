@@ -5,7 +5,7 @@
 #include "object.h"
 #include "vector.h"
 
-bool rayTriangleIntersect(const Vector3f& v0, const Vector3f& v1, const Vector3f& v2,
+bool RayTriangleIntersect(const Vector3f& v0, const Vector3f& v1, const Vector3f& v2,
                           const Vector3f& orig, const Vector3f& dir, float& tnear, float& u,
                           float& v) {
   // TODO: Implement this function that tests whether the triangle
@@ -32,7 +32,7 @@ public:
     memcpy(stCoordinates.get(), st, sizeof(Vector2f) * maxIndex);
   }
 
-  bool intersect(const Vector3f& orig, const Vector3f& dir, float& tnear, uint32_t& index,
+  bool Intersect(const Vector3f& orig, const Vector3f& dir, float& tnear, uint32_t& index,
                  Vector2f& uv) const override {
     bool intersect = false;
     for (uint32_t k = 0; k < numTriangles; ++k) {
@@ -40,7 +40,7 @@ public:
       const Vector3f& v1 = vertices[vertexIndex[k * 3 + 1]];
       const Vector3f& v2 = vertices[vertexIndex[k * 3 + 2]];
       float t, u, v;
-      if (rayTriangleIntersect(v0, v1, v2, orig, dir, t, u, v) && t < tnear) {
+      if (RayTriangleIntersect(v0, v1, v2, orig, dir, t, u, v) && t < tnear) {
         tnear = t;
         uv.x = u;
         uv.y = v;
@@ -52,7 +52,7 @@ public:
     return intersect;
   }
 
-  void getSurfaceProperties(const Vector3f&, const Vector3f&, const uint32_t& index,
+  void GetSurfaceProperties(const Vector3f&, const Vector3f&, const uint32_t& index,
                             const Vector2f& uv, Vector3f& N, Vector2f& st) const override {
     const Vector3f& v0 = vertices[vertexIndex[index * 3]];
     const Vector3f& v1 = vertices[vertexIndex[index * 3 + 1]];
@@ -66,7 +66,7 @@ public:
     st = st0 * (1 - uv.x - uv.y) + st1 * uv.x + st2 * uv.y;
   }
 
-  Vector3f evalDiffuseColor(const Vector2f& st) const override {
+  Vector3f EvalDiffuseColor(const Vector2f& st) const override {
     float scale = 5;
     float pattern = (fmodf(st.x * scale, 1) > 0.5) ^ (fmodf(st.y * scale, 1) > 0.5);
     return lerp(Vector3f(0.815, 0.235, 0.031), Vector3f(0.937, 0.937, 0.231), pattern);
