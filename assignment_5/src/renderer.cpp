@@ -3,24 +3,38 @@
 #include "scene.h"
 #include "vector.h"
 
+/**
+ * @brief Convert degrees to radians
+ *
+ * @param deg Angle in degrees
+ * @return Angle in radians
+ */
 inline float deg2rad(const float& deg) { return deg * M_PI / 180.0; }
 
-// Compute reflection direction
+/**
+ * @brief Compute reflection direction
+ *
+ * @param I Incident direction
+ * @param N Surface normal
+ * @return Reflected direction
+ */
 Vector3f reflect(const Vector3f& I, const Vector3f& N) { return I - 2 * dotProduct(I, N) * N; }
 
-// [comment]
-// Compute refraction direction using Snell's law
-//
-// We need to handle with care the two possible situations:
-//
-//    - When the ray is inside the object
-//
-//    - When the ray is outside.
-//
-// If the ray is outside, you need to make cosi positive cosi = -N.I
-//
-// If the ray is inside, you need to invert the refractive indices and negate the normal N
-// [/comment]
+/**
+ * @brief Compute refraction direction using Snell's law
+ *
+ * We need to handle with care the two possible situations:
+ *    - When the ray is inside the object
+ *    - When the ray is outside.
+ *
+ * If the ray is outside, you need to make cosi positive cosi = -N.I
+ * If the ray is inside, you need to invert the refractive indices and negate the normal N
+ *
+ * @param I Incident direction
+ * @param N Surface normal
+ * @param ior Index of refraction
+ * @return Refracted direction
+ */
 Vector3f refract(const Vector3f& I, const Vector3f& N, const float& ior) {
   float cosi = clamp(-1, 1, dotProduct(I, N));
   float etai = 1, etat = ior;
@@ -36,15 +50,14 @@ Vector3f refract(const Vector3f& I, const Vector3f& N, const float& ior) {
   return k < 0 ? 0 : eta * I + (eta * cosi - sqrtf(k)) * n;
 }
 
-// [comment]
-// Compute Fresnel equation
-//
-// \param I is the incident view direction
-//
-// \param N is the normal at the intersection point
-//
-// \param ior is the material refractive index
-// [/comment]
+/**
+ * @brief Compute Fresnel equation
+ *
+ * @param I Incident view direction
+ * @param N Surface normal at the intersection point
+ * @param ior Material refractive index
+ * @return Fresnel reflection coefficient (kr)
+ */
 float fresnel(const Vector3f& I, const Vector3f& N, const float& ior) {
   float cosi = clamp(-1, 1, dotProduct(I, N));
   float etai = 1, etat = ior;
@@ -67,21 +80,16 @@ float fresnel(const Vector3f& I, const Vector3f& N, const float& ior) {
   // kt = 1 - kr;
 }
 
-// [comment]
-// Returns true if the ray intersects an object, false otherwise.
-//
-// \param orig is the ray origin
-// \param dir is the ray direction
-// \param objects is the list of objects the scene contains
-// \param[out] tNear contains the distance to the cloesest intersected object.
-// \param[out] index stores the index of the intersect triangle if the interesected object is a
-// mesh.
-// \param[out] uv stores the u and v barycentric coordinates of the intersected point
-// \param[out] *hitObject stores the pointer to the intersected object (used to retrieve material
-// information, etc.)
-// \param isShadowRay is it a shadow ray. We can return from the function sooner as soon as we have
-// found a hit.
-// [/comment]
+/**
+ * @brief Test ray intersection with scene objects
+ *
+ * Returns true if the ray intersects an object, false otherwise.
+ *
+ * @param orig Ray origin
+ * @param dir Ray direction
+ * @param objects List of objects the scene contains
+ * @return Optional HitPayload containing intersection information (tNear, index, uv, hitObject)
+ */
 std::optional<HitPayload> trace(const Vector3f& orig, const Vector3f& dir,
                                 const std::vector<std::unique_ptr<Object> >& objects) {
   float tNear = kInfinity;
@@ -103,23 +111,28 @@ std::optional<HitPayload> trace(const Vector3f& orig, const Vector3f& dir,
   return payload;
 }
 
-// [comment]
-// Implementation of the Whitted-style light transport algorithm (E [S*] (D|G) L)
-//
-// This function is the function that compute the color at the intersection point
-// of a ray defined by a position and a direction. Note that thus function is recursive (it calls
-// itself).
-//
-// If the material of the intersected object is either reflective or reflective and refractive,
-// then we compute the reflection/refraction direction and cast two new rays into the scene
-// by calling the castRay() function recursively. When the surface is transparent, we mix
-// the reflection and refraction color using the result of the fresnel equations (it computes
-// the amount of reflection and refraction depending on the surface normal, incident view direction
-// and surface refractive index).
-//
-// If the surface is diffuse/glossy we use the Phong illumation model to compute the color
-// at the intersection point.
-// [/comment]
+/**
+ * @brief Implementation of the Whitted-style light transport algorithm (E [S*] (D|G) L)
+ *
+ * This function computes the color at the intersection point of a ray defined by a position
+ * and a direction. Note that this function is recursive (it calls itself).
+ *
+ * If the material of the intersected object is either reflective or reflective and refractive,
+ * then we compute the reflection/refraction direction and cast two new rays into the scene
+ * by calling the castRay() function recursively. When the surface is transparent, we mix
+ * the reflection and refraction color using the result of the fresnel equations (it computes
+ * the amount of reflection and refraction depending on the surface normal, incident view direction
+ * and surface refractive index).
+ *
+ * If the surface is diffuse/glossy we use the Phong illumination model to compute the color
+ * at the intersection point.
+ *
+ * @param orig Ray origin
+ * @param dir Ray direction
+ * @param scene Scene to render
+ * @param depth Current recursion depth
+ * @return Color at the intersection point
+ */
 Vector3f castRay(const Vector3f& orig, const Vector3f& dir, const Scene& scene, int depth) {
   if (depth > scene.max_depth) {
     return Vector3f(0.0, 0.0, 0.0);
@@ -159,17 +172,13 @@ Vector3f castRay(const Vector3f& orig, const Vector3f& dir, const Scene& scene, 
         break;
       }
       default: {
-        // [comment]
-        // We use the Phong illumation model int the default case. The phong model
+        // We use the Phong illumination model in the default case. The phong model
         // is composed of a diffuse and a specular reflection component.
-        // [/comment]
         Vector3f lightAmt = 0, specularColor = 0;
         Vector3f shadowPointOrig =
             (dotProduct(dir, N) < 0) ? hitPoint + N * scene.epsilon : hitPoint - N * scene.epsilon;
-        // [comment]
         // Loop over all lights in the scene and sum their contribution up
         // We also apply the lambert cosine law
-        // [/comment]
         for (auto& light : scene.GetLights()) {
           Vector3f lightDir = light->position - hitPoint;
           // square of the distance between hitPoint and the light
@@ -199,11 +208,15 @@ Vector3f castRay(const Vector3f& orig, const Vector3f& dir, const Scene& scene, 
   return hitColor;
 }
 
-// [comment]
-// The main render function. This where we iterate over all pixels in the image, generate
-// primary rays and cast these rays into the scene. The content of the framebuffer is
-// saved to a file.
-// [/comment]
+/**
+ * @brief The main render function
+ *
+ * This is where we iterate over all pixels in the image, generate
+ * primary rays and cast these rays into the scene. The content of the framebuffer is
+ * saved to a file.
+ *
+ * @param scene Scene to render
+ */
 void Renderer::Render(const Scene& scene) {
   std::vector<Vector3f> framebuffer(scene.width * scene.height);
 
