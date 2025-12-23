@@ -8,10 +8,10 @@
 // as well as set the options for the render (image width and height, maximum recursion
 // depth, field-of-view, etc.). We then call the render function().
 int main() {
-  // Setup scene
+  // 1. Setup scene
   Scene scene(1280, 960);
 
-  // Add objects to secene
+  // 2. Add objects to secene
   auto sph1 = std::make_unique<Sphere>(Vector3f(-1, 0, -12), 2);
   sph1->material_type = kDIFFUSE_AND_GLOSSY;
   sph1->diffuse_color = Vector3f(0.6, 0.7, 0.8);
@@ -33,6 +33,7 @@ int main() {
   scene.Add(std::make_unique<Light>(Vector3f(-20, 70, 20), 0.5));
   scene.Add(std::make_unique<Light>(Vector3f(30, 50, -12), 0.5));
 
+  // 3. Render scene
   Renderer renderer;
   renderer.Render(scene);
 

@@ -38,24 +38,24 @@ public:
   float x, y;
 };
 
-inline Vector3f lerp(const Vector3f& a, const Vector3f& b, const float& t) {
+inline Vector3f Lerp(const Vector3f& a, const Vector3f& b, const float& t) {
   return a * (1 - t) + b * t;
 }
 
-inline Vector3f normalize(const Vector3f& v) {
+inline Vector3f Normalize(const Vector3f& v) {
   float mag2 = v.x * v.x + v.y * v.y + v.z * v.z;
   if (mag2 > 0) {
-    float invMag = 1 / sqrtf(mag2);
-    return Vector3f(v.x * invMag, v.y * invMag, v.z * invMag);
+    float inv_mag = 1 / sqrtf(mag2);
+    return Vector3f(v.x * inv_mag, v.y * inv_mag, v.z * inv_mag);
   }
 
   return v;
 }
 
-inline float dotProduct(const Vector3f& a, const Vector3f& b) {
+inline float DotProduct(const Vector3f& a, const Vector3f& b) {
   return a.x * b.x + a.y * b.y + a.z * b.z;
 }
 
-inline Vector3f crossProduct(const Vector3f& a, const Vector3f& b) {
+inline Vector3f CrossProduct(const Vector3f& a, const Vector3f& b) {
   return Vector3f(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x);
 }

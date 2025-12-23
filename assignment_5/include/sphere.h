@@ -11,9 +11,9 @@ public:
                  Vector2f&) const override {
     // analytic solution
     Vector3f L = orig - center;
-    float a = dotProduct(dir, dir);
-    float b = 2 * dotProduct(dir, L);
-    float c = dotProduct(L, L) - radius2;
+    float a = DotProduct(dir, dir);
+    float b = 2 * DotProduct(dir, L);
+    float c = DotProduct(L, L) - radius2;
     float t0, t1;
     if (!SolveQuadratic(a, b, c, t0, t1)) return false;
     if (t0 < 0) t0 = t1;
@@ -25,7 +25,7 @@ public:
 
   void GetSurfaceProperties(const Vector3f& P, const Vector3f&, const uint32_t&, const Vector2f&,
                             Vector3f& N, Vector2f&) const override {
-    N = normalize(P - center);
+    N = Normalize(P - center);
   }
 
   Vector3f center;
