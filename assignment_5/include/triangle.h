@@ -1,7 +1,9 @@
 #pragma once
 
 #include <cstring>
+#include <memory>
 #include "object.h"
+#include "vector.h"
 
 bool rayTriangleIntersect(const Vector3f& v0, const Vector3f& v1, const Vector3f& v2,
                           const Vector3f& orig, const Vector3f& dir, float& tnear, float& u,
