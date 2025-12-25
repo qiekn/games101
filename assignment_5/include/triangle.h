@@ -5,13 +5,25 @@
 #include "object.h"
 #include "vector.h"
 
-bool RayTriangleIntersect(const Vector3f& v0, const Vector3f& v1, const Vector3f& v2,
-                          const Vector3f& orig, const Vector3f& dir, float& tnear, float& u,
-                          float& v) {
-  // TODO: Implement this function that tests whether the triangle
-  // that's specified bt v0, v1 and v2 intersects with the ray (whose
-  // origin is *orig* and direction is *dir*)
-  // Also don't forget to update tnear, u and v.
+inline bool RayTriangleIntersect(const Vector3f& v0, const Vector3f& v1, const Vector3f& v2,
+                                 const Vector3f& orig, const Vector3f& dir, float& tnear, float& u,
+                                 float& v) {
+  // Moller-Trumbore algorithm
+  Vector3f e1 = v1 - v0;
+  Vector3f e2 = v2 - v0;
+  Vector3f s = orig - v0;
+  Vector3f s1 = CrossProduct(dir, e2);
+  Vector3f s2 = CrossProduct(s, e1);
+
+  float coeff = 1.0 / DotProduct(s1, e1);
+  tnear = coeff * DotProduct(s2, e2);
+  u = coeff * DotProduct(s1, s);
+  v = coeff * DotProduct(s2, dir);
+
+  if (tnear >= 0 && u >= 0 && v >= 0 && (1 - u - v) >= 0) {
+    return true;
+  }
+
   return false;
 }
 
