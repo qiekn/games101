@@ -18,16 +18,25 @@ int main() {
   scene.Add(std::make_unique<Light>(Vector3f(20, 70, 20), 1));
   scene.BuildBVH();
 
-  Renderer r;
+  Renderer renderer;
 
-  auto start = std::chrono::system_clock::now();
-  r.Render(scene);
-  auto stop = std::chrono::system_clock::now();
+  // see: https://qiekn.notion.site/cpp-benchmarking
+  using clock = std::chrono::steady_clock;
 
+  auto start = clock::now();
+  renderer.Render(scene);
+  auto stop = clock::now();
+
+  auto elapsed = stop - start;
+  std::chrono::hh_mm_ss hms{elapsed};
+
+  // clang-format off
   std::cout << "Render complete: \n";
-  std::cout << "Time taken: " << std::chrono::duration_cast<std::chrono::hours>(stop - start).count() << " hours\n";
-  std::cout << "          : " << std::chrono::duration_cast<std::chrono::minutes>(stop - start).count() << " minutes\n";
-  std::cout << "          : " << std::chrono::duration_cast<std::chrono::seconds>(stop - start).count() << " seconds\n";
+  std::cout << "Time taken: " 
+            << hms.hours().count() << "h "
+            << hms.minutes().count() << "m "
+            << hms.seconds().count() << "s\n";
+  // clang-format on
 
   return 0;
 }
