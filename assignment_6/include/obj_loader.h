@@ -28,25 +28,25 @@ struct Vector2 {
     X = 0.0f;
     Y = 0.0f;
   }
+
   // Variable Set Constructor
   Vector2(float X_, float Y_) {
     X = X_;
     Y = Y_;
   }
+
   // Bool Equals Operator Overload
   bool operator==(const Vector2& other) const { return (this->X == other.X && this->Y == other.Y); }
+
   // Bool Not Equals Operator Overload
-  bool operator!=(const Vector2& other) const {
-    return !(this->X == other.X && this->Y == other.Y);
-  }
+  bool operator!=(const Vector2& other) const { return !(this->X == other.X && this->Y == other.Y); }
+
   // Addition Operator Overload
-  Vector2 operator+(const Vector2& right) const {
-    return Vector2(this->X + right.X, this->Y + right.Y);
-  }
+  Vector2 operator+(const Vector2& right) const { return Vector2(this->X + right.X, this->Y + right.Y); }
+
   // Subtraction Operator Overload
-  Vector2 operator-(const Vector2& right) const {
-    return Vector2(this->X - right.X, this->Y - right.Y);
-  }
+  Vector2 operator-(const Vector2& right) const { return Vector2(this->X - right.X, this->Y - right.Y); }
+
   // Float Multiplication Operator Overload
   Vector2 operator*(const float& other) const { return Vector2(this->X * other, this->Y * other); }
 
@@ -65,36 +65,39 @@ struct Vector3 {
     Y = 0.0f;
     Z = 0.0f;
   }
+
   // Variable Set Constructor
   Vector3(float X_, float Y_, float Z_) {
     X = X_;
     Y = Y_;
     Z = Z_;
   }
+
   // Bool Equals Operator Overload
   bool operator==(const Vector3& other) const {
     return (this->X == other.X && this->Y == other.Y && this->Z == other.Z);
   }
+
   // Bool Not Equals Operator Overload
   bool operator!=(const Vector3& other) const {
     return !(this->X == other.X && this->Y == other.Y && this->Z == other.Z);
   }
+
   // Addition Operator Overload
   Vector3 operator+(const Vector3& right) const {
     return Vector3(this->X + right.X, this->Y + right.Y, this->Z + right.Z);
   }
+
   // Subtraction Operator Overload
   Vector3 operator-(const Vector3& right) const {
     return Vector3(this->X - right.X, this->Y - right.Y, this->Z - right.Z);
   }
+
   // Float Multiplication Operator Overload
-  Vector3 operator*(const float& other) const {
-    return Vector3(this->X * other, this->Y * other, this->Z * other);
-  }
+  Vector3 operator*(const float& other) const { return Vector3(this->X * other, this->Y * other, this->Z * other); }
+
   // Float Division Operator Overload
-  Vector3 operator/(const float& other) const {
-    return Vector3(this->X / other, this->Y / other, this->Z / other);
-  }
+  Vector3 operator/(const float& other) const { return Vector3(this->X / other, this->Y / other, this->Z / other); }
 
   // Positional Variables
   float X;
@@ -163,12 +166,14 @@ struct Material {
 struct Mesh {
   // Default Constructor
   Mesh() {}
+
   // Variable Set Constructor
   Mesh(std::vector<Vertex>& _Vertices, std::vector<unsigned int>& _Indices) {
     Vertices = _Vertices;
     Indices = _Indices;
     MeshMaterial = std::nullopt;
   }
+
   // Mesh Name
   std::string MeshName;
   // Vertex List
@@ -196,7 +201,9 @@ float MagnitudeV3(const Vector3 in) {
 }
 
 // Vector3 DotProduct
-float DotV3(const Vector3 a, const Vector3 b) { return (a.X * b.X) + (a.Y * b.Y) + (a.Z * b.Z); }
+float DotV3(const Vector3 a, const Vector3 b) {
+  return (a.X * b.X) + (a.Y * b.Y) + (a.Z * b.Z);
+}
 
 // Angle between 2 Vector3 Objects
 float AngleBetweenV3(const Vector3 a, const Vector3 b) {
@@ -246,11 +253,12 @@ Vector3 GenTriNormal(Vector3 t1, Vector3 t2, Vector3 t3) {
 // Check to see if a Vector3 Point is within a 3 Vector3 Triangle
 bool inTriangle(Vector3 point, Vector3 tri1, Vector3 tri2, Vector3 tri3) {
   // Test to see if it is within an infinite prism that the triangle outlines.
-  bool within_tri_prisim = SameSide(point, tri1, tri2, tri3) && SameSide(point, tri2, tri1, tri3) &&
-                           SameSide(point, tri3, tri1, tri2);
+  bool within_tri_prisim =
+      SameSide(point, tri1, tri2, tri3) && SameSide(point, tri2, tri1, tri3) && SameSide(point, tri3, tri1, tri2);
 
   // If it isn't it will never be on the triangle
-  if (!within_tri_prisim) return false;
+  if (!within_tri_prisim)
+    return false;
 
   // Calulate Triangle's Normal
   Vector3 n = GenTriNormal(tri1, tri2, tri3);
@@ -340,6 +348,7 @@ class Loader {
 public:
   // Default Constructor
   Loader() {}
+
   ~Loader() { LoadedMeshes.clear(); }
 
   // Load a file into the loader
@@ -350,11 +359,13 @@ public:
   // or unable to be loaded return false
   bool LoadFile(std::string Path) {
     // If the file is not an .obj file return false
-    if (Path.substr(Path.size() - 4, 4) != ".obj") return false;
+    if (Path.substr(Path.size() - 4, 4) != ".obj")
+      return false;
 
     std::ifstream file(Path);
 
-    if (!file.is_open()) return false;
+    if (!file.is_open())
+      return false;
 
     LoadedMeshes.clear();
     LoadedVertices.clear();
@@ -384,17 +395,15 @@ public:
 #ifdef OBJL_CONSOLE_OUTPUT
       if ((outputIndicator = ((outputIndicator + 1) % outputEveryNth)) == 1) {
         if (!meshname.empty()) {
-          std::cout << "\r- " << meshname << "\t| vertices > " << Positions.size()
-                    << "\t| texcoords > " << TCoords.size() << "\t| normals > " << Normals.size()
-                    << "\t| triangles > " << (Vertices.size() / 3)
-                    << (!MeshMatNames.empty() ? "\t| material: " + MeshMatNames.back() : "");
+          std::cout << "\r- " << meshname << "\t| vertices > " << Positions.size() << "\t| texcoords > "
+                    << TCoords.size() << "\t| normals > " << Normals.size() << "\t| triangles > "
+                    << (Vertices.size() / 3) << (!MeshMatNames.empty() ? "\t| material: " + MeshMatNames.back() : "");
         }
       }
 #endif
 
       // Generate a Mesh Object or Prepare for an object to be created
-      if (algorithm::firstToken(curline) == "o" || algorithm::firstToken(curline) == "g" ||
-          curline[0] == 'g') {
+      if (algorithm::firstToken(curline) == "o" || algorithm::firstToken(curline) == "g" || curline[0] == 'g') {
         if (!listening) {
           listening = true;
 
@@ -508,7 +517,8 @@ public:
             tempMesh.MeshName = meshname + "_" + std::to_string(i);
 
             for (auto& m : LoadedMeshes)
-              if (m.MeshName == tempMesh.MeshName) continue;
+              if (m.MeshName == tempMesh.MeshName)
+                continue;
             break;
           }
 
@@ -602,8 +612,8 @@ private:
   // Generate vertices from a list of positions,
   //	tcoords, normals and a face line
   void GenVerticesFromRawOBJ(std::vector<Vertex>& oVerts, const std::vector<Vector3>& iPositions,
-                             const std::vector<Vector2>& iTCoords,
-                             const std::vector<Vector3>& iNormals, std::string icurline) {
+                             const std::vector<Vector2>& iTCoords, const std::vector<Vector3>& iNormals,
+                             std::string icurline) {
     std::vector<std::string> sface, svert;
     Vertex vVert;
     algorithm::split(algorithm::tail(icurline), sface, " ");
@@ -743,9 +753,12 @@ private:
         if (tVerts.size() == 3) {
           // Create a triangle from pCur, pPrev, pNext
           for (int j = 0; j < int(tVerts.size()); j++) {
-            if (iVerts[j].Position == pCur.Position) oIndices.push_back(j);
-            if (iVerts[j].Position == pPrev.Position) oIndices.push_back(j);
-            if (iVerts[j].Position == pNext.Position) oIndices.push_back(j);
+            if (iVerts[j].Position == pCur.Position)
+              oIndices.push_back(j);
+            if (iVerts[j].Position == pPrev.Position)
+              oIndices.push_back(j);
+            if (iVerts[j].Position == pNext.Position)
+              oIndices.push_back(j);
           }
 
           tVerts.clear();
@@ -754,9 +767,12 @@ private:
         if (tVerts.size() == 4) {
           // Create a triangle from pCur, pPrev, pNext
           for (int j = 0; j < int(iVerts.size()); j++) {
-            if (iVerts[j].Position == pCur.Position) oIndices.push_back(j);
-            if (iVerts[j].Position == pPrev.Position) oIndices.push_back(j);
-            if (iVerts[j].Position == pNext.Position) oIndices.push_back(j);
+            if (iVerts[j].Position == pCur.Position)
+              oIndices.push_back(j);
+            if (iVerts[j].Position == pPrev.Position)
+              oIndices.push_back(j);
+            if (iVerts[j].Position == pNext.Position)
+              oIndices.push_back(j);
           }
 
           Vector3 tempVec;
@@ -770,9 +786,12 @@ private:
 
           // Create a triangle from pCur, pPrev, pNext
           for (int j = 0; j < int(iVerts.size()); j++) {
-            if (iVerts[j].Position == pPrev.Position) oIndices.push_back(j);
-            if (iVerts[j].Position == pNext.Position) oIndices.push_back(j);
-            if (iVerts[j].Position == tempVec) oIndices.push_back(j);
+            if (iVerts[j].Position == pPrev.Position)
+              oIndices.push_back(j);
+            if (iVerts[j].Position == pNext.Position)
+              oIndices.push_back(j);
+            if (iVerts[j].Position == tempVec)
+              oIndices.push_back(j);
           }
 
           tVerts.clear();
@@ -780,29 +799,32 @@ private:
         }
 
         // If Vertex is not an interior vertex
-        float angle =
-            math::AngleBetweenV3(pPrev.Position - pCur.Position, pNext.Position - pCur.Position) *
-            (180 / 3.14159265359);
-        if (angle <= 0 && angle >= 180) continue;
+        float angle = math::AngleBetweenV3(pPrev.Position - pCur.Position, pNext.Position - pCur.Position) *
+                      (180 / 3.14159265359);
+        if (angle <= 0 && angle >= 180)
+          continue;
 
         // If any vertices are within this triangle
         bool inTri = false;
         for (int j = 0; j < int(iVerts.size()); j++) {
-          if (algorithm::inTriangle(iVerts[j].Position, pPrev.Position, pCur.Position,
-                                    pNext.Position) &&
+          if (algorithm::inTriangle(iVerts[j].Position, pPrev.Position, pCur.Position, pNext.Position) &&
               iVerts[j].Position != pPrev.Position && iVerts[j].Position != pCur.Position &&
               iVerts[j].Position != pNext.Position) {
             inTri = true;
             break;
           }
         }
-        if (inTri) continue;
+        if (inTri)
+          continue;
 
         // Create a triangle from pCur, pPrev, pNext
         for (int j = 0; j < int(iVerts.size()); j++) {
-          if (iVerts[j].Position == pCur.Position) oIndices.push_back(j);
-          if (iVerts[j].Position == pPrev.Position) oIndices.push_back(j);
-          if (iVerts[j].Position == pNext.Position) oIndices.push_back(j);
+          if (iVerts[j].Position == pCur.Position)
+            oIndices.push_back(j);
+          if (iVerts[j].Position == pPrev.Position)
+            oIndices.push_back(j);
+          if (iVerts[j].Position == pNext.Position)
+            oIndices.push_back(j);
         }
 
         // Delete pCur from the list
@@ -819,22 +841,26 @@ private:
       }
 
       // if no triangles were created
-      if (oIndices.size() == 0) break;
+      if (oIndices.size() == 0)
+        break;
 
       // if no more vertices
-      if (tVerts.size() == 0) break;
+      if (tVerts.size() == 0)
+        break;
     }
   }
 
   // Load Materials from .mtl file
   bool LoadMaterials(std::string path) {
     // If the file is not a material file return false
-    if (path.substr(path.size() - 4, path.size()) != ".mtl") return false;
+    if (path.substr(path.size() - 4, path.size()) != ".mtl")
+      return false;
 
     std::ifstream file(path);
 
     // If the file is not found return false
-    if (!file.is_open()) return false;
+    if (!file.is_open())
+      return false;
 
     Material tempMaterial;
 
@@ -874,7 +900,8 @@ private:
         std::vector<std::string> temp;
         algorithm::split(algorithm::tail(curline), temp, " ");
 
-        if (temp.size() != 3) continue;
+        if (temp.size() != 3)
+          continue;
 
         tempMaterial.Ka.X = std::stof(temp[0]);
         tempMaterial.Ka.Y = std::stof(temp[1]);
@@ -885,7 +912,8 @@ private:
         std::vector<std::string> temp;
         algorithm::split(algorithm::tail(curline), temp, " ");
 
-        if (temp.size() != 3) continue;
+        if (temp.size() != 3)
+          continue;
 
         tempMaterial.Kd.X = std::stof(temp[0]);
         tempMaterial.Kd.Y = std::stof(temp[1]);
@@ -896,7 +924,8 @@ private:
         std::vector<std::string> temp;
         algorithm::split(algorithm::tail(curline), temp, " ");
 
-        if (temp.size() != 3) continue;
+        if (temp.size() != 3)
+          continue;
 
         tempMaterial.Ks.X = std::stof(temp[0]);
         tempMaterial.Ks.Y = std::stof(temp[1]);
@@ -939,8 +968,7 @@ private:
         tempMaterial.map_d = algorithm::tail(curline);
       }
       // Bump Map
-      if (algorithm::firstToken(curline) == "map_Bump" ||
-          algorithm::firstToken(curline) == "map_bump" ||
+      if (algorithm::firstToken(curline) == "map_Bump" || algorithm::firstToken(curline) == "map_bump" ||
           algorithm::firstToken(curline) == "bump") {
         tempMaterial.map_bump = algorithm::tail(curline);
       }
@@ -953,7 +981,8 @@ private:
 
     // Test to see if anything was loaded
     // If not return false
-    if (LoadedMaterials.empty()) return false;
+    if (LoadedMaterials.empty())
+      return false;
     // If so return true
     else
       return true;

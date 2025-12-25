@@ -18,8 +18,8 @@ public:
   }
 
   Vector3f SamplePoint() const {
-    auto random_u = get_random_float();
-    auto random_v = get_random_float();
+    auto random_u = GetRandomFloat();
+    auto random_v = GetRandomFloat();
     return position + random_u * u + random_v * v;
   }
 

@@ -2,8 +2,7 @@
 // Created by LEI XU on 5/16/19.
 //
 
-#ifndef RAYTRACING_INTERSECTION_H
-#define RAYTRACING_INTERSECTION_H
+#pragma once
 
 #include "material.h"
 #include "vector.h"
@@ -20,6 +19,7 @@ struct Intersection {
     obj = nullptr;
     m = nullptr;
   }
+
   bool happened;
   Vector3f coords;
   Vector3f normal;
@@ -27,4 +27,3 @@ struct Intersection {
   Object* obj;
   Material* m;
 };
-#endif  // RAYTRACING_INTERSECTION_H
