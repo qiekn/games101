@@ -9,6 +9,7 @@
 // etc.). We then call the render function().
 
 int main() {
+  // ----------------------------------------------------------------------------: setup: put objects into scene
   Scene scene(1280, 960);
 
   MeshTriangle bunny("../models/bunny.obj");
@@ -18,6 +19,7 @@ int main() {
   scene.Add(std::make_unique<Light>(Vector3f(20, 70, 20), 1));
   scene.BuildBVH();
 
+  // ----------------------------------------------------------------------------: render process and benchmark
   Renderer renderer;
 
   // see: https://qiekn.notion.site/cpp-benchmarking

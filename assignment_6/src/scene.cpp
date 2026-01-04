@@ -6,7 +6,7 @@
 
 void Scene::BuildBVH() {
   printf(" - Generating BVH...\n\n");
-  this->bvh = new BVHAccel(objects, 1, BVHAccel::SplitMethod::NAIVE);
+  this->bvh = new BVHAccel(objects, 1, BVHAccel::SplitMethod::kNaive);
 }
 
 Intersection Scene::Intersect(const Ray& ray) const {
@@ -46,13 +46,13 @@ bool Scene::Trace(const Ray& ray, const std::vector<Object*>& objects, float& tN
 // If the surface is duffuse/glossy we use the Phong illumation model to compute the color
 // at the intersection point.
 Vector3f Scene::CastRay(const Ray& ray, int depth) const {
-  if (depth > this->max_depth_) {
+  if (depth > this->max_depth) {
     return Vector3f(0.0, 0.0, 0.0);
   }
   Intersection intersection = Scene::Intersect(ray);
   Material* m = intersection.m;
   Object* hitObject = intersection.obj;
-  Vector3f hitColor = this->background_color_;
+  Vector3f hitColor = this->background_color;
   //    float tnear = kInfinity;
   Vector2f uv;
   uint32_t index = 0;
@@ -65,7 +65,7 @@ Vector3f Scene::CastRay(const Ray& ray, int depth) const {
     switch (m->GetType()) {
       case REFLECTION_AND_REFRACTION: {
         Vector3f reflectionDirection = Normalize(Reflect(ray.direction, N));
-        Vector3f refractionDirection = Normalize(Refract(ray.direction, N, m->ior_));
+        Vector3f refractionDirection = Normalize(Refract(ray.direction, N, m->ior));
         Vector3f reflectionRayOrig =
             (DotProduct(reflectionDirection, N) < 0) ? hitPoint - N * kEpsilon : hitPoint + N * kEpsilon;
         Vector3f refractionRayOrig =
@@ -73,13 +73,13 @@ Vector3f Scene::CastRay(const Ray& ray, int depth) const {
         Vector3f reflectionColor = CastRay(Ray(reflectionRayOrig, reflectionDirection), depth + 1);
         Vector3f refractionColor = CastRay(Ray(refractionRayOrig, refractionDirection), depth + 1);
         float kr;
-        Fresnel(ray.direction, N, m->ior_, kr);
+        Fresnel(ray.direction, N, m->ior, kr);
         hitColor = reflectionColor * kr + refractionColor * (1 - kr);
         break;
       }
       case REFLECTION: {
         float kr;
-        Fresnel(ray.direction, N, m->ior_, kr);
+        Fresnel(ray.direction, N, m->ior, kr);
         Vector3f reflectionDirection = Reflect(ray.direction, N);
         Vector3f reflectionRayOrig =
             (DotProduct(reflectionDirection, N) < 0) ? hitPoint + N * kEpsilon : hitPoint - N * kEpsilon;
@@ -116,11 +116,11 @@ Vector3f Scene::CastRay(const Ray& ray, int depth) const {
             lightAmt += (1 - inShadow) * GetLights()[i]->intensity * LdotN;
             Vector3f reflectionDirection = Reflect(-lightDir, N);
             specularColor +=
-                powf(std::max(0.f, -DotProduct(reflectionDirection, ray.direction)), m->specular_exponent_) *
+                powf(std::max(0.f, -DotProduct(reflectionDirection, ray.direction)), m->specular_exponent) *
                 GetLights()[i]->intensity;
           }
         }
-        hitColor = lightAmt * (hitObject->EvalDiffuseColor(st) * m->kd_ + specularColor * m->ks_);
+        hitColor = lightAmt * (hitObject->EvalDiffuseColor(st) * m->kd + specularColor * m->ks);
         break;
       }
     }

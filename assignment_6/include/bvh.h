@@ -10,51 +10,52 @@
 #include "object.h"
 #include "ray.h"
 
-struct BVHBuildNode;
-// BVHAccel Forward Declarations
-struct BVHPrimitiveInfo;
+// Forward Declarations
+struct BvhNode;
+struct BvhPrimitiveInfo;
 
 // BVHAccel Declarations
 inline int leafNodes, totalLeafNodes, totalPrimitives, interiorNodes;
 
 class BVHAccel {
 public:
-  // BVHAccel Public Types
-  enum class SplitMethod { NAIVE, SAH };
+  enum class SplitMethod { kNaive, kSAH };
 
-  // BVHAccel Public Methods
-  BVHAccel(std::vector<Object*> p, int maxPrimsInNode = 1, SplitMethod splitMethod = SplitMethod::NAIVE);
+  BVHAccel(std::vector<Object*> p, int max_prims_in_node = 1, SplitMethod split_method = SplitMethod::kNaive);
+
   Bounds3 WorldBound() const;
+
   ~BVHAccel();
 
   Intersection Intersect(const Ray& ray) const;
-  Intersection GetIntersection(BVHBuildNode* node, const Ray& ray) const;
+
+  Intersection GetIntersection(BvhNode* node, const Ray& ray) const;
+
   bool IntersectP(const Ray& ray) const;
-  BVHBuildNode* root;
 
-  // BVHAccel Private Methods
-  BVHBuildNode* RecursiveBuild(std::vector<Object*> objects);
+  BvhNode* root;
 
-  // BVHAccel Private Data
-  const int max_prims_in_node_;
+private:
+  BvhNode* RecursiveBuild(std::vector<Object*> objects);
+
+private:
+  const int max_prims_in_node_;  // primes: primitives
   const SplitMethod split_method_;
   std::vector<Object*> primitives;
 };
 
-struct BVHBuildNode {
-  Bounds3 bounds;
-  BVHBuildNode* left;
-  BVHBuildNode* right;
-  Object* object;
-
-public:
-  int split_axis = 0, first_prim_offset = 0, n_primitives = 0;
-
-  // BVHBuildNode Public Methods
-  BVHBuildNode() {
+struct BvhNode {
+  BvhNode() {
     bounds = Bounds3();
     left = nullptr;
     right = nullptr;
     object = nullptr;
   }
+
+  int split_axis = 0, first_prim_offset = 0, n_primitives = 0;
+
+  Bounds3 bounds;
+  BvhNode* left;
+  BvhNode* right;
+  Object* object;  // stored at leaf node
 };

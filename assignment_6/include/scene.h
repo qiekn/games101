@@ -8,26 +8,11 @@
 #pragma once
 
 #include <memory>
-#include <vector>
 #include "area_light.h"
 #include "bvh.h"
-#include "light.h"
-#include "object.h"
-#include "ray.h"
-#include "vector.h"
 
-/**
- * @class Scene
- * @brief Main scene class containing objects, lights and rendering parameters
- */
 class Scene {
 public:
-  int width = 1280;
-  int height = 960;
-  double fov = 90;
-  Vector3f background_color_ = Vector3f(0.235294, 0.67451, 0.843137);
-  int max_depth_ = 5;  // Maximum ray tracing recursion depth
-
   Scene(int w, int h) : width(w), height(h) {}
 
   void Add(Object* object) { objects.push_back(object); }
@@ -38,60 +23,21 @@ public:
 
   const std::vector<std::unique_ptr<Light>>& GetLights() const { return lights; }
 
-  /**
-   * @brief Find intersection of ray with scene objects
-   */
   Intersection Intersect(const Ray& ray) const;
-
-  // BVH acceleration structure for the scene
-  BVHAccel* bvh;
 
   void BuildBVH();
 
-  /**
-   * @brief Cast a ray into the scene and compute color
-   * @param ray The ray to cast
-   * @param depth Current recursion depth
-   * @return Computed color at the ray intersection
-   */
+  // Cast a ray into the scene and compute color
   Vector3f CastRay(const Ray& ray, int depth) const;
 
-  /**
-   * @brief Trace a ray through the scene
-   * @param ray The ray to trace
-   * @param objects Objects to test for intersection
-   * @param tNear Output parameter for nearest intersection distance
-   * @param index Output parameter for object index
-   * @param hitObject Output parameter for pointer to hit object
-   * @return True if intersection found, false otherwise
-   */
-  bool Trace(const Ray& ray, const std::vector<Object*>& objects, float& tNear, uint32_t& index, Object** hitObject);
+  // Trace a ray throught the scene
+  // Return true if intersection found
+  bool Trace(const Ray& ray, const std::vector<Object*>& objects, float& t_near, uint32_t& index, Object** hit_object);
 
-  /**
-   * @brief Handle lighting computation for area lights
-   * @param light The area light
-   * @param hitPoint The surface point being lit
-   * @param N Surface normal at hit point
-   * @param shadowPointOrig Origin point for shadow rays
-   * @param objects Objects in the scene for shadow testing
-   * @param index Object index
-   * @param dir View direction
-   * @param specularExponent Material specular exponent
-   * @return Tuple of diffuse and specular color contributions
-   */
-  std::tuple<Vector3f, Vector3f> HandleAreaLight(const AreaLight& light, const Vector3f& hitPoint, const Vector3f& N,
+  std::tuple<Vector3f, Vector3f> HandleAreaLight(const AreaLight& light, const Vector3f& hit_point, const Vector3f& N,
                                                  const Vector3f& shadowPointOrig, const std::vector<Object*>& objects,
                                                  uint32_t& index, const Vector3f& dir, float specularExponent);
 
-  std::vector<Object*> objects;
-  std::vector<std::unique_ptr<Light>> lights;
-
-  /**
-   * @brief Compute reflection direction
-   * @param I Incident ray direction
-   * @param N Surface normal
-   * @return Reflected ray direction
-   */
   Vector3f Reflect(const Vector3f& I, const Vector3f& N) const { return I - 2 * DotProduct(I, N) * N; }
 
   /**
@@ -158,4 +104,16 @@ public:
     // As a consequence of the conservation of energy, transmittance is given by:
     // kt = 1 - kr;
   }
+
+public:
+  int width = 1280;
+  int height = 960;
+  double fov = 90;
+  Vector3f background_color = Vector3f(0.235294, 0.67451, 0.843137);
+  int max_depth = 5;  //  Maximum ray tracing recursion depth
+
+  BVHAccel* bvh;  // BVH acceleration structure for the scene
+
+  std::vector<Object*> objects;
+  std::vector<std::unique_ptr<Light>> lights;
 };

@@ -12,11 +12,9 @@
 
 class Bounds3 {
 public:
-  // ----------------------------------------------------------------------------: data
   Vector3f p_min, p_max;  // two points to specify the bounding box
 
 public:
-  // ----------------------------------------------------------------------------: constructors
   Bounds3() {
     double min = std::numeric_limits<double>::lowest();
     double max = std::numeric_limits<double>::max();
@@ -31,7 +29,6 @@ public:
     p_max = Vector3f(fmax(p1.x, p2.x), fmax(p1.y, p2.y), fmax(p1.z, p2.z));
   }
 
-  // ----------------------------------------------------------------------------: public methods
   Vector3f Diagonal() const { return p_max - p_min; }
 
   // Returns the index of the axis with the maximum extent (0=x, 1=y, 2=z).
@@ -93,28 +90,25 @@ public:
   // index 0 returns p_min, index 1 returns p_max.
   inline const Vector3f& operator[](int i) const { return (i == 0) ? p_min : p_max; }
 
-  inline bool IntersectP(const Ray& ray, const Vector3f& invDir, const std::array<int, 3>& dirisNeg) const;
+  inline bool IntersectP(const Ray& ray, const Vector3f& inv_dir, const std::array<int, 3>& dir_is_neg) const;
 };
 
-inline bool Bounds3::IntersectP(const Ray& ray, const Vector3f& invDir, const std::array<int, 3>& dirIsNeg) const {
-  // invDir: ray direction(x,y,z), invDir=(1.0/x,1.0/y,1.0/z), use this because Multiply is faster
-  // that Division dirIsNeg: ray direction(x,y,z), dirIsNeg=[int(x>0),int(y>0),int(z>0)], use this
-  // to simplify your logic
+inline bool Bounds3::IntersectP(const Ray& ray, const Vector3f& inv_dir, const std::array<int, 3>& dir_is_neg) const {
+  // invDir: ray direction(x,y,z), invDir=(1.0/x,1.0/y,1.0/z), use this because Multiply is faster that Division
+  // dir_is_neg: ray direction(x,y,z), dir_is_neg=[int(x>0),int(y>0),int(z>0)], use this to simplify your logic
   // TODO test if ray bound intersects
 }
 
-// Returns the bounding box that encloses both input bounding boxes.
 inline Bounds3 Union(const Bounds3& b1, const Bounds3& b2) {
-  Bounds3 ret;
-  ret.p_min = Vector3f::Min(b1.p_min, b2.p_min);
-  ret.p_max = Vector3f::Max(b1.p_max, b2.p_max);
-  return ret;
+  Bounds3 res;  // short for result
+  res.p_min = Vector3f::Min(b1.p_min, b2.p_min);
+  res.p_max = Vector3f::Max(b1.p_max, b2.p_max);
+  return res;
 }
 
-// Returns the bounding box that encloses the input bounding box and point.
 inline Bounds3 Union(const Bounds3& b, const Vector3f& p) {
-  Bounds3 ret;
-  ret.p_min = Vector3f::Min(b.p_min, p);
-  ret.p_max = Vector3f::Max(b.p_max, p);
-  return ret;
+  Bounds3 res;
+  res.p_min = Vector3f::Min(b.p_min, p);
+  res.p_max = Vector3f::Max(b.p_max, p);
+  return res;
 }

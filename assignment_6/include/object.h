@@ -1,8 +1,8 @@
 //
 // Created by LEI XU on 5/13/19.
 //
-
 #pragma once
+
 #include <cstdint>
 
 #include "bounds3.h"
@@ -10,11 +10,12 @@
 #include "ray.h"
 #include "vector.h"
 
+// Base class of objects in scene
 class Object {
 public:
   Object() {}
 
-  virtual ~Object() {}
+  virtual ~Object() = default;
 
   virtual bool Intersect(const Ray& ray) = 0;
   virtual bool Intersect(const Ray& ray, float&, uint32_t&) const = 0;

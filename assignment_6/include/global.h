@@ -36,11 +36,11 @@ inline float GetRandomFloat() {
 }
 
 inline void UpdateProgress(float progress) {
-  int barWidth = 70;
+  int bar_width = 70;
 
   std::cout << "[";
-  int pos = barWidth * progress;
-  for (int i = 0; i < barWidth; ++i) {
+  int pos = bar_width * progress;
+  for (int i = 0; i < bar_width; ++i) {
     if (i < pos)
       std::cout << "=";
     else if (i == pos)
