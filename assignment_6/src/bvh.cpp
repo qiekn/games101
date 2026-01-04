@@ -92,17 +92,32 @@ BvhNode* BVHAccel::RecursiveBuild(std::vector<Object*> objects) {
 }
 
 Intersection BVHAccel::Intersect(const Ray& ray) const {
-  Intersection isect;
+  Intersection hit;
   if (!root)
-    return isect;
-  isect = BVHAccel::GetIntersection(root, ray);
-  return isect;
+    return hit;
+  hit = BVHAccel::GetIntersection(root, ray);
+  return hit;
 }
 
 Intersection BVHAccel::GetIntersection(BvhNode* node, const Ray& ray) const {
-  // TODO Traverse the BVH to find intersection
+  Intersection hit;
 
-  // 1. 如果光线不与当前节点的包围盒相交，返回空
-  // 2. 如果是叶子节点（有 object），返回与该物体的交点
-  // 3. 否则，递归检查左右子树，返回更近的交点
+  Vector3f inv_dir = ray.direction_inv;
+  std::array<bool, 3> is_dir_neg = {ray.direction.x < 0, ray.direction.y < 0, ray.direction.z < 0};
+
+  // Check current bbox (Bounding Box)
+  if (!node->bounds.IntersectP(ray, inv_dir, is_dir_neg)) {
+    return hit;
+  }
+
+  // Check leaf node
+  if (node->left == nullptr && node->right == nullptr) {
+    return node->object->GetIntersection(ray);
+  }
+
+  // Recursively check left and right subtrees, return the closer hit
+  Intersection hit_left = GetIntersection(node->left, ray);
+  Intersection hit_right = GetIntersection(node->right, ray);
+
+  return hit_left.distance < hit_right.distance ? hit_left : hit_right;
 }

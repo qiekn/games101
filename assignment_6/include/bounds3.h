@@ -90,13 +90,44 @@ public:
   // index 0 returns p_min, index 1 returns p_max.
   inline const Vector3f& operator[](int i) const { return (i == 0) ? p_min : p_max; }
 
-  inline bool IntersectP(const Ray& ray, const Vector3f& inv_dir, const std::array<int, 3>& dir_is_neg) const;
+  inline bool IntersectP(const Ray& ray, const Vector3f& inv_dir, const std::array<bool, 3>& is_dir_neg) const;
 };
 
-inline bool Bounds3::IntersectP(const Ray& ray, const Vector3f& inv_dir, const std::array<int, 3>& dir_is_neg) const {
-  // invDir: ray direction(x,y,z), invDir=(1.0/x,1.0/y,1.0/z), use this because Multiply is faster that Division
-  // dir_is_neg: ray direction(x,y,z), dir_is_neg=[int(x>0),int(y>0),int(z>0)], use this to simplify your logic
-  // TODO test if ray bound intersects
+inline bool Bounds3::IntersectP(const Ray& ray, const Vector3f& inv_dir, const std::array<bool, 3>& is_dir_neg) const {
+  // is_dir_neg[i] == true: direction is negative, hit p_max first then p_min
+  // is_dir_neg[i] == false: direction is positive, hit p_min first then p_max
+
+  // Calculate the tmin and tmax for each pair
+  // For example
+  //   ray: r(t) = o + t * d & x = x0 (plane)
+  // Solve intersection:
+  //   r(t).x = ox + t * dx = x0
+  //   => t = (x0 - ox) / dx
+
+  // x axis
+  double t_x_min = (p_min.x - ray.origin.x) * inv_dir.x;
+  double t_x_max = (p_max.x - ray.origin.x) * inv_dir.x;
+  if (is_dir_neg[0])
+    std::swap(t_x_min, t_x_max);
+
+  // y axis
+  double t_y_min = (p_min.y - ray.origin.y) * inv_dir.y;
+  double t_y_max = (p_max.y - ray.origin.y) * inv_dir.y;
+  if (is_dir_neg[1])
+    std::swap(t_y_min, t_y_max);
+
+  // z axis
+  double t_z_min = (p_min.z - ray.origin.z) * inv_dir.z;
+  double t_z_max = (p_max.z - ray.origin.z) * inv_dir.z;
+  if (is_dir_neg[2])
+    std::swap(t_z_min, t_z_max);
+
+  // See p38: https://sites.cs.ucsb.edu/~lingqi/teaching/resources/GAMES101_Lecture_13.pdf
+  double t_enter = std::max({t_x_min, t_y_min, t_z_min});
+  double t_exit = std::min({t_x_max, t_y_max, t_z_max});
+
+  // See p39 of the pdf above
+  return t_enter < t_exit && t_exit >= 0;
 }
 
 inline Bounds3 Union(const Bounds3& b1, const Bounds3& b2) {
