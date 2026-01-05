@@ -1,6 +1,6 @@
 #include <algorithm>
 #include <cassert>
-#include "BVH.hpp"
+#include "bvh.h"
 
 BVHAccel::BVHAccel(std::vector<Object*> p, int maxPrimsInNode,
                    SplitMethod splitMethod)

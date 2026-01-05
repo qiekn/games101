@@ -5,12 +5,12 @@
 #pragma once
 
 #include <vector>
-#include "Vector.hpp"
-#include "Object.hpp"
-#include "Light.hpp"
-#include "AreaLight.hpp"
-#include "BVH.hpp"
-#include "Ray.hpp"
+#include "vector.h"
+#include "object.h"
+#include "light.h"
+#include "area_light.h"
+#include "bvh.h"
+#include "ray.h"
 
 
 class Scene

@@ -1,11 +1,10 @@
 #pragma once
 
-#include "BVH.hpp"
-#include "Intersection.hpp"
-#include "Material.hpp"
-#include "OBJ_Loader.hpp"
-#include "Object.hpp"
-#include "Triangle.hpp"
+#include "bvh.h"
+#include "intersection.h"
+#include "material.h"
+#include "obj_loader.h"
+#include "object.h"
 #include <cassert>
 #include <array>
 

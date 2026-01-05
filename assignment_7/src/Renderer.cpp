@@ -3,8 +3,8 @@
 //
 
 #include <fstream>
-#include "Scene.hpp"
-#include "Renderer.hpp"
+#include "scene.h"
+#include "renderer.h"
 
 
 inline float deg2rad(const float& deg) { return deg * M_PI / 180.0; }

@@ -4,8 +4,8 @@
 
 #ifndef RAYTRACING_BOUNDS3_H
 #define RAYTRACING_BOUNDS3_H
-#include "Ray.hpp"
-#include "Vector.hpp"
+#include "ray.h"
+#include "vector.h"
 #include <limits>
 #include <array>
 

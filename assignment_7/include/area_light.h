@@ -4,9 +4,9 @@
 
 #pragma once
 
-#include "Vector.hpp"
-#include "Light.hpp"
-#include "global.hpp"
+#include "vector.h"
+#include "light.h"
+#include "global.h"
 
 class AreaLight : public Light
 {

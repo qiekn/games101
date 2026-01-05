@@ -9,11 +9,11 @@
 #include <vector>
 #include <memory>
 #include <ctime>
-#include "Object.hpp"
-#include "Ray.hpp"
-#include "Bounds3.hpp"
-#include "Intersection.hpp"
-#include "Vector.hpp"
+#include "object.h"
+#include "ray.h"
+#include "bounds3.h"
+#include "intersection.h"
+#include "vector.h"
 
 struct BVHBuildNode;
 // BVHAccel Forward Declarations

@@ -5,10 +5,10 @@
 #ifndef RAYTRACING_SPHERE_H
 #define RAYTRACING_SPHERE_H
 
-#include "Object.hpp"
-#include "Vector.hpp"
-#include "Bounds3.hpp"
-#include "Material.hpp"
+#include "object.h"
+#include "vector.h"
+#include "bounds3.h"
+#include "material.h"
 
 class Sphere : public Object{
 public:

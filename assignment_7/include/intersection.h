@@ -4,8 +4,8 @@
 
 #ifndef RAYTRACING_INTERSECTION_H
 #define RAYTRACING_INTERSECTION_H
-#include "Vector.hpp"
-#include "Material.hpp"
+#include "vector.h"
+#include "material.h"
 class Object;
 class Sphere;
 

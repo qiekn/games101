@@ -1,7 +1,7 @@
 //
 // Created by goksu on 2/25/20.
 //
-#include "Scene.hpp"
+#include "scene.h"
 
 #pragma once
 struct hit_payload

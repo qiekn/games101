@@ -5,11 +5,11 @@
 #ifndef RAYTRACING_OBJECT_H
 #define RAYTRACING_OBJECT_H
 
-#include "Vector.hpp"
-#include "global.hpp"
-#include "Bounds3.hpp"
-#include "Ray.hpp"
-#include "Intersection.hpp"
+#include "vector.h"
+#include "global.h"
+#include "bounds3.h"
+#include "ray.h"
+#include "intersection.h"
 
 class Object
 {
