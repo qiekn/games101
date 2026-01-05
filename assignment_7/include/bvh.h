@@ -1,72 +1,61 @@
-//
-// Created by LEI XU on 5/16/19.
-//
+#pragma once
 
-#ifndef RAYTRACING_BVH_H
-#define RAYTRACING_BVH_H
-
-#include <atomic>
 #include <vector>
-#include <memory>
-#include <ctime>
-#include "object.h"
-#include "ray.h"
+
 #include "bounds3.h"
 #include "intersection.h"
-#include "vector.h"
+#include "object.h"
+#include "ray.h"
 
-struct BVHBuildNode;
-// BVHAccel Forward Declarations
-struct BVHPrimitiveInfo;
+// Forward Declarations
+struct BvhNode;
+struct BvhPrimitiveInfo;
 
 // BVHAccel Declarations
-inline int leafNodes, totalLeafNodes, totalPrimitives, interiorNodes;
+inline int leaf_nodes, total_leaf_nodes, total_primitives, interior_nodes;
+
 class BVHAccel {
+public:
+  enum class SplitMethod { kNaive, kSAH };
+
+  BvhNode* root;
 
 public:
-    // BVHAccel Public Types
-    enum class SplitMethod { NAIVE, SAH };
+  BVHAccel(std::vector<Object*> p, int max_prims_in_node = 1, SplitMethod split_method = SplitMethod::kNaive);
+  ~BVHAccel();
 
-    // BVHAccel Public Methods
-    BVHAccel(std::vector<Object*> p, int maxPrimsInNode = 1, SplitMethod splitMethod = SplitMethod::NAIVE);
-    Bounds3 WorldBound() const;
-    ~BVHAccel();
+  Bounds3 WorldBound() const;
+  Intersection Intersect(const Ray& ray) const;
+  Intersection GetIntersection(BvhNode* node, const Ray& ray) const;
+  bool IntersectP(const Ray& ray) const;
+  void GetSample(BvhNode* node, float p, Intersection& pos, float& pdf);
+  void Sample(Intersection& pos, float& pdf);
 
-    Intersection Intersect(const Ray &ray) const;
-    Intersection getIntersection(BVHBuildNode* node, const Ray& ray)const;
-    bool IntersectP(const Ray &ray) const;
-    BVHBuildNode* root;
+private:
+  BvhNode* RecursiveBuild(std::vector<Object*> objects);
 
-    // BVHAccel Private Methods
-    BVHBuildNode* recursiveBuild(std::vector<Object*>objects);
-
-    // BVHAccel Private Data
-    const int maxPrimsInNode;
-    const SplitMethod splitMethod;
-    std::vector<Object*> primitives;
-
-    void getSample(BVHBuildNode* node, float p, Intersection &pos, float &pdf);
-    void Sample(Intersection &pos, float &pdf);
+private:
+  const int max_prims_in_node_;  // primes: primitives
+  const SplitMethod split_method_;
+  std::vector<Object*> primitives_;
 };
 
-struct BVHBuildNode {
-    Bounds3 bounds;
-    BVHBuildNode *left;
-    BVHBuildNode *right;
-    Object* object;
-    float area;
+struct BvhNode {
+public:
+  BvhNode() {
+    bounds = Bounds3();
+    left = nullptr;
+    right = nullptr;
+    object = nullptr;
+  }
 
 public:
-    int splitAxis=0, firstPrimOffset=0, nPrimitives=0;
-    // BVHBuildNode Public Methods
-    BVHBuildNode(){
-        bounds = Bounds3();
-        left = nullptr;right = nullptr;
-        object = nullptr;
-    }
+  Bounds3 bounds;
+  BvhNode* left;
+  BvhNode* right;
+  Object* object;  // stored at leaf node
+  float area;
+  int split_axis = 0;
+  int first_prim_offset = 0;
+  int n_primitives = 0;
 };
-
-
-
-
-#endif //RAYTRACING_BVH_H

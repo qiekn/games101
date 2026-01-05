@@ -1,21 +1,15 @@
-//
-// Created by goksu on 2/25/20.
-//
+#pragma once
+
 #include "scene.h"
 
-#pragma once
-struct hit_payload
-{
-    float tNear;
-    uint32_t index;
-    Vector2f uv;
-    Object* hit_obj;
+struct HitPayload {
+  float t_near;
+  uint32_t index;
+  Vector2f uv;
+  Object* hit_obj;
 };
 
-class Renderer
-{
+class Renderer {
 public:
-    void Render(const Scene& scene);
-
-private:
+  void Render(const Scene& scene);
 };

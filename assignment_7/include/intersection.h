@@ -1,31 +1,31 @@
-//
-// Created by LEI XU on 5/16/19.
-//
+#pragma once
 
-#ifndef RAYTRACING_INTERSECTION_H
-#define RAYTRACING_INTERSECTION_H
+#include <limits>
+
 #include "vector.h"
-#include "material.h"
+
+class Material;
 class Object;
 class Sphere;
 
-struct Intersection
-{
-    Intersection(){
-        happened=false;
-        coords=Vector3f();
-        normal=Vector3f();
-        distance= std::numeric_limits<double>::max();
-        obj =nullptr;
-        m=nullptr;
-    }
-    bool happened;
-    Vector3f coords;
-    Vector3f tcoords;
-    Vector3f normal;
-    Vector3f emit;
-    double distance;
-    Object* obj;
-    Material* m;
+struct Intersection {
+public:
+  bool happened;
+  Vector3f coords;
+  Vector3f tcoords;
+  Vector3f normal;
+  Vector3f emit;
+  double distance;
+  Object* obj;
+  Material* m;
+
+public:
+  Intersection() {
+    happened = false;
+    coords = Vector3f();
+    normal = Vector3f();
+    distance = std::numeric_limits<double>::max();
+    obj = nullptr;
+    m = nullptr;
+  }
 };
-#endif //RAYTRACING_INTERSECTION_H
