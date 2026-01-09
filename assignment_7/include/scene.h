@@ -6,9 +6,9 @@
 #include "area_light.h"
 #include "bvh.h"
 #include "light.h"
-#include "object.h"
+#include "objects/object.h"
 #include "ray.h"
-#include "vector.h"
+#include "utils/vector.h"
 
 class Scene {
 public:

@@ -8,8 +8,8 @@
 #include "global.h"
 #include "intersection.h"
 #include "material.h"
-#include "obj_loader.h"
-#include "object.h"
+#include "utils/obj_loader.h"
+#include "objects/object.h"
 
 bool RayTriangleIntersect(const Vector3f& v0, const Vector3f& v1, const Vector3f& v2, const Vector3f& orig,
                           const Vector3f& dir, float& tnear, float& u, float& v) {

@@ -2,7 +2,7 @@
 
 #include "global.h"
 #include "light.h"
-#include "vector.h"
+#include "utils/vector.h"
 
 class AreaLight : public Light {
 public:

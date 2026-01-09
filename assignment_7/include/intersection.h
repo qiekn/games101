@@ -2,7 +2,7 @@
 
 #include <limits>
 
-#include "vector.h"
+#include "utils/vector.h"
 
 class Material;
 class Object;

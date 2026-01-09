@@ -4,7 +4,7 @@
 
 #include "bounds3.h"
 #include "intersection.h"
-#include "object.h"
+#include "objects/object.h"
 #include "ray.h"
 
 // Forward Declarations

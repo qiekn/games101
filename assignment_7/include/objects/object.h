@@ -4,7 +4,7 @@
 #include "bounds3.h"
 #include "intersection.h"
 #include "ray.h"
-#include "vector.h"
+#include "utils/vector.h"
 
 class Object {
 public:

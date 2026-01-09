@@ -4,7 +4,7 @@
 #include <limits>
 
 #include "ray.h"
-#include "vector.h"
+#include "utils/vector.h"
 
 class Bounds3 {
 public:

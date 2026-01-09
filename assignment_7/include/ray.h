@@ -1,6 +1,6 @@
 #pragma once
 
-#include "vector.h"
+#include "utils/vector.h"
 
 struct Ray {
 public:

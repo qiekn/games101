@@ -2,8 +2,8 @@
 
 #include "renderer.h"
 #include "scene.h"
-#include "triangle.h"
-#include "vector.h"
+#include "objects/triangle.h"
+#include "utils/vector.h"
 
 // In the main function of the program, we create the scene (create objects and
 // lights) as well as set the options for the render (image width and height,

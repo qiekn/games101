@@ -3,8 +3,8 @@
 #include "bounds3.h"
 #include "global.h"
 #include "material.h"
-#include "object.h"
-#include "vector.h"
+#include "objects/object.h"
+#include "utils/vector.h"
 
 class Sphere : public Object {
 public:

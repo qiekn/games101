@@ -3,7 +3,7 @@
 #include <cmath>
 
 #include "global.h"
-#include "vector.h"
+#include "utils/vector.h"
 
 enum MaterialType { kDiffuse };
 
