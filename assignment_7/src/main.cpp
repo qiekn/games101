@@ -1,8 +1,8 @@
 #include <chrono>
 
+#include "objects/mesh_triangle.h"
 #include "renderer.h"
 #include "scene.h"
-#include "objects/triangle.h"
 #include "utils/vector.h"
 
 // In the main function of the program, we create the scene (create objects and

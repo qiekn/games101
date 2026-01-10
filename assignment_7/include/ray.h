@@ -3,10 +3,9 @@
 #include "utils/vector.h"
 
 struct Ray {
-public:
   // Destination = origin + t * direction
   Vector3f origin;
-  Vector3f direction,  direction_inv;
+  Vector3f direction, direction_inv;
   double t;  // transportation time
   double t_min, t_max;
 

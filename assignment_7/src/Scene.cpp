@@ -51,3 +51,40 @@ Vector3f Scene::CastRay(const Ray& ray, int depth) const {
   // TODO: Implement Path Tracing Algorithm here
   return Vector3f();
 }
+
+void Scene::Fresnel(const Vector3f& I, const Vector3f& N, const float& ior, float& kr) const {
+  float cosi = Clamp(-1, 1, DotProduct(I, N));
+  float etai = 1, etat = ior;
+  if (cosi > 0) {
+    std::swap(etai, etat);
+  }
+  // Compute sini using Snell's law
+  float sint = etai / etat * sqrtf(std::max(0.f, 1 - cosi * cosi));
+  // Total internal reflection
+  if (sint >= 1) {
+    kr = 1;
+  } else {
+    float cost = sqrtf(std::max(0.f, 1 - sint * sint));
+    cosi = fabsf(cosi);
+    float Rs = ((etat * cosi) - (etai * cost)) / ((etat * cosi) + (etai * cost));
+    float Rp = ((etai * cosi) - (etat * cost)) / ((etai * cosi) + (etat * cost));
+    kr = (Rs * Rs + Rp * Rp) / 2;
+  }
+  // As a consequence of the conservation of energy, transmittance is given by:
+  // kt = 1 - kr;
+}
+
+Vector3f Scene::Refract(const Vector3f& I, const Vector3f& N, const float& ior) const {
+  float cosi = Clamp(-1, 1, DotProduct(I, N));
+  float etai = 1, etat = ior;
+  Vector3f n = N;
+  if (cosi < 0) {
+    cosi = -cosi;
+  } else {
+    std::swap(etai, etat);
+    n = -N;
+  }
+  float eta = etai / etat;
+  float k = 1 - eta * eta * (1 - cosi * cosi);
+  return k < 0 ? 0 : eta * I + (eta * cosi - sqrtf(k)) * n;
+}
