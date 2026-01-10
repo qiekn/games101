@@ -3,10 +3,9 @@
 #include "global.h"
 #include "scene.h"
 
+// The main render function.
+// This where we iterate over all pixels in the image, generate primary rays and cast these rays into the scene. The content of the framebuffer is saved to a file.
 
-// The main render function. This where we iterate over all pixels in the image,
-// generate primary rays and cast these rays into the scene. The content of the
-// framebuffer is saved to a file.
 void Renderer::Render(const Scene& scene) {
   std::vector<Vector3f> framebuffer(scene.width * scene.height);
 
